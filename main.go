@@ -2,19 +2,12 @@ package main
 
 import (
 	"github.com/ODawah/Distributed-URL-Shortener/Server"
-	"github.com/ODawah/Distributed-URL-Shortener/models"
 )
-
-var ids = []models.URL{
-	{ID: "12345", URL: "www.google.com"},
-	{ID: "12346", URL: "www.facebook.com"},
-	{ID: "12347", URL: "www.twitter.com"},
-}
 
 func main() {
 	r := Server.Routes()
 
-	err := r.Run("localhost:8000")
+	err := r.Run("0.0.0.0:8080")
 	if err != nil {
 		panic(err)
 	}

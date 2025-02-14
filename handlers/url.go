@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/ODawah/Distributed-URL-Shortener/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func GetURL(ctx *gin.Context) {
@@ -16,12 +14,12 @@ func GetURL(ctx *gin.Context) {
 
 	//TODO: check if it's duplicated
 
-	Request := models.RequestData{
-		ShortID:   id,
-		Timestamp: time.Now(),
-		IP:        ctx.ClientIP(),
-	}
-	fmt.Println(Request)
+	//Request := models.RequestData{
+	//	ShortID:   id,
+	//	Timestamp: time.Now(),
+	//	IP:        ctx.ClientIP(),
+	//}
+
 	ctx.IndentedJSON(http.StatusOK, id)
 }
 
