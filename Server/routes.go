@@ -11,6 +11,8 @@ func Routes() *gin.Engine {
 
 	r.Use(middlewares.Limiter)
 
+	go middlewares.CleanupLimiters()
+
 	r.GET("/:shortID", handlers.GetURL)
 
 	r.POST("/shorten", handlers.ShortenURL)

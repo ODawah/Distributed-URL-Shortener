@@ -33,7 +33,7 @@ func getLimiter(ip string) *rate.Limiter {
 	return limiter
 }
 
-func cleanupLimiters() {
+func CleanupLimiters() {
 	for {
 		time.Sleep(cleanupInterval)
 
