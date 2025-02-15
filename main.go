@@ -14,6 +14,11 @@ func main() {
 		panic(err)
 	}
 
+	_, _, err = persistence.ConnectToMongo()
+	if err != nil {
+		panic(err)
+	}
+
 	err = r.Run("0.0.0.0:8080")
 	if err != nil {
 		panic(err)

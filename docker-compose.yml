@@ -4,3 +4,20 @@ services:
     image: "redis:latest"
     ports:
       - "6379:6379"
+  mongodb:
+    image: mongo
+    restart: always
+    networks:
+      - default
+    ports:
+      - "27017:27017"
+    container_name: mongodb
+
+
+  app:
+    build: .
+    depends_on:
+      - redis
+      - mongodb
+    ports:
+      - "8080:8080"
