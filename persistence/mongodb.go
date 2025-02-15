@@ -2,6 +2,8 @@ package persistence
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -16,8 +18,8 @@ func ConnectToMongo() (database *mongo.Database, ctx context.Context, err error)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://mongodb:27017"))
 	if err != nil {
-		log.Println("database connection error", err)
-		return nil, nil, err
+		return nil, nil, errors.New(fmt.Sprintf("Failed to connect to Mongo: %v", err))
+
 	}
 	MongoClient = client
 
@@ -26,11 +28,7 @@ func ConnectToMongo() (database *mongo.Database, ctx context.Context, err error)
 		log.Println("err", err)
 		return
 	}
-	log.Println("Successfully connected and pinged.")
-
-	//dbName := "client-requests"
-	//database = client.Database(dbName)
-	//
-	//log.Println(dbName, database.Name())
+	
+	log.Println("Successfully connected to Mongo and pinged.")
 	return
 }

@@ -41,16 +41,15 @@ func RedisInsert(data *models.URL) error {
 	return nil
 }
 
-func RedisGet(data *models.URL) error {
-	fmt.Println("Looking up Redis for ID:", data.ID) // Debugging statement
+func RedisGet(id string) *models.URL {
 
-	val, err := RedisClient.Get(context.Background(), data.ID).Result()
-	if err != nil {
-		fmt.Println("Error fetching from Redis:", err) // Debugging statement
-		return errors.New(fmt.Sprintf("Failed to get key: %v", err))
+	val, _ := RedisClient.Get(context.Background(), id).Result()
+	if val == "" {
+		return nil
 	}
 
-	fmt.Println("Found in Redis, URL:", val) // Debugging statement
-	data.URL = val
-	return nil
+	return &models.URL{
+		URL: val,
+		ID:  id,
+	}
 }

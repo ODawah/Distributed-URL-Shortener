@@ -2,14 +2,26 @@
 package services
 
 import (
-	"fmt"
 	"github.com/ODawah/Distributed-URL-Shortener/models"
 	"github.com/ODawah/Distributed-URL-Shortener/persistence"
 	"github.com/jaevor/go-nanoid"
+	"regexp"
 )
+
+func IsValidURL(url string) bool {
+	// Define regex pattern for validating websites
+	pattern := `^www\.[a-zA-Z0-9-]+\.(com|net|org|edu|gov|io|co|uk|us|info|biz|tv|me)$`
+
+	// Compile regex
+	re := regexp.MustCompile(pattern)
+
+	// Match the input website against the regex
+	return re.MatchString(url)
+}
 
 // Shorten generates a short URL ID and saves it in Redis
 func Shorten(url *models.URL) error {
+
 	canonicID, err := nanoid.Standard(8)
 	if err != nil {
 		return err
@@ -24,15 +36,12 @@ func Shorten(url *models.URL) error {
 }
 
 // GetURL retrieves a URL from Redis
-func GetURL(url *models.URL) error {
-	fmt.Println("Fetching URL for ID:", url.ID) // Debugging statement
+func GetURL(id string) *models.URL {
 
-	err := persistence.RedisGet(url)
-	if err != nil {
-		fmt.Println("Redis lookup failed:", err) // Debugging statement
-		return err
+	url := persistence.RedisGet(id)
+	if url == nil {
+		return nil
 	}
 
-	fmt.Println("URL fetched from Redis:", url.URL) // Debugging statement
-	return nil
+	return url
 }

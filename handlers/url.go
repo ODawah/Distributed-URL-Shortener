@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/ODawah/Distributed-URL-Shortener/models"
 	"github.com/ODawah/Distributed-URL-Shortener/services"
@@ -10,21 +11,16 @@ import (
 )
 
 func GetURL(ctx *gin.Context) {
-	Url := &models.URL{} // ✅ Properly initialize the struct
+	id := ctx.Param("shortID")
 
-	Url.ID = ctx.Param("shortID")
-	fmt.Println("Short ID received:", Url.ID) // Debugging statement
-
-	if len(Url.ID) < 8 {
-		fmt.Println("Short ID too short, rejecting request")
-		ctx.AbortWithStatus(http.StatusBadRequest)
+	if len(id) < 8 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errors.New("request id is less than 8 character")})
 		return
 	}
 
-	err := services.GetURL(Url)
-	if err != nil {
-		fmt.Println("Error retrieving URL from Redis:", err) // Debugging statement
-		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "URL not found"})
+	url := services.GetURL(id)
+	if url == nil {
+		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 
@@ -37,28 +33,30 @@ func GetURL(ctx *gin.Context) {
 	}
 
 	Request := models.RequestData{
-		ShortID:   Url.ID,
+		ShortID:   id,
 		Timestamp: formattedTime,
 		IP:        ctx.ClientIP(),
 	}
 
 	go services.LogRequestData(Request)
 
-	fmt.Println("Retrieved URL:", Url) // Debugging statement
-
-	ctx.IndentedJSON(http.StatusOK, Url)
+	ctx.IndentedJSON(http.StatusOK, url)
 }
 
 func ShortenURL(ctx *gin.Context) {
 	var url *models.URL
 	if err := ctx.ShouldBindJSON(&url); err != nil {
-		ctx.Error(err)
-		ctx.AbortWithStatus(http.StatusBadRequest)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	valid := services.IsValidURL(url.URL)
+	if !valid {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid url"})
 		return
 	}
 	err := services.Shorten(url)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
 	}
 	ctx.JSON(http.StatusOK, url)
 }
