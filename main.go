@@ -3,13 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/ODawah/Distributed-URL-Shortener/Server"
 	"github.com/ODawah/Distributed-URL-Shortener/persistence"
+	"github.com/ODawah/Distributed-URL-Shortener/server"
 )
 
 func main() {
 
-	r := Server.Routes()
+	r := server.Routes()
 
 	err := persistence.ConnectToRedis()
 	if err != nil {

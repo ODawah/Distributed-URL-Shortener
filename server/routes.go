@@ -1,4 +1,4 @@
-package Server
+package server
 
 import (
 	"github.com/ODawah/Distributed-URL-Shortener/handlers"
