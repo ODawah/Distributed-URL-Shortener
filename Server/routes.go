@@ -13,7 +13,7 @@ func Routes() *gin.Engine {
 
 	go middlewares.CleanupLimiters()
 
-	r.GET("/:shortID", handlers.GetURL)
+	r.GET("/:shortID", middlewares.LogRequestMiddleware, handlers.GetURL)
 
 	r.POST("/shorten", handlers.ShortenURL)
 

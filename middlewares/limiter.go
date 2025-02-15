@@ -16,7 +16,6 @@ var (
 
 const cleanupInterval = 5 * time.Minute // Remove inactive limiters every 5 minutes
 
-// Get or create a rate limiter for a user (IP-based)
 func getLimiter(ip string) *rate.Limiter {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -51,12 +50,10 @@ func CleanupLimiters() {
 	}
 }
 
-// Middleware to check the rate limit.
 func Limiter(ctx *gin.Context) {
 	ip := ctx.ClientIP()
 	limiter := getLimiter(ip)
 
-	// Check if the request is allowed
 	if !limiter.Allow() {
 		ctx.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{"error": "Too many requests"})
 		return

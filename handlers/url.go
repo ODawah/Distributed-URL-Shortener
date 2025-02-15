@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/ODawah/Distributed-URL-Shortener/models"
 	"github.com/ODawah/Distributed-URL-Shortener/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func GetURL(ctx *gin.Context) {
@@ -24,21 +22,21 @@ func GetURL(ctx *gin.Context) {
 		return
 	}
 
-	now := time.Now()
-
-	// Format and parse it back to time.Time
-	formattedTime, err := time.Parse("02-Jan-2006 15:04:05", now.Format("02-Jan-2006 15:04:05"))
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-	}
-
-	Request := models.RequestData{
-		ShortID:   id,
-		Timestamp: formattedTime,
-		IP:        ctx.ClientIP(),
-	}
-
-	go services.LogRequestData(Request)
+	//now := time.Now()
+	//
+	//// Format and parse it back to time.Time
+	//formattedTime, err := time.Parse("02-Jan-2006 15:04:05", now.Format("02-Jan-2006 15:04:05"))
+	//if err != nil {
+	//	fmt.Println("Error parsing time:", err)
+	//}
+	//
+	//Request := models.RequestData{
+	//	ShortID:   id,
+	//	Timestamp: formattedTime,
+	//	IP:        ctx.ClientIP(),
+	//}
+	//
+	//go services.LogRequestData(Request)
 
 	ctx.IndentedJSON(http.StatusOK, url)
 }
